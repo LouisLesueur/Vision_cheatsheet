@@ -1,0 +1,302 @@
+<!doctype html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="generator" content="pandoc">
+      <meta name="author" content="Louis Lesueur">
+      
+      <title>Image formation</title>
+      <!-- Bootstrap -->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+      <!-- Font-awesome -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <!-- Styles -->
+      <link rel="stylesheet" href="https://ashki23.github.io/styles.css">
+            <!-- Add favicon here -->
+            <!-- Add site-verifications here -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.js"></script>
+              <script>document.addEventListener("DOMContentLoaded", function () {
+               var mathElements = document.getElementsByClassName("math");
+               var macros = [];
+               for (var i = 0; i < mathElements.length; i++) {
+                var texText = mathElements[i].firstChild;
+                if (mathElements[i].tagName == "SPAN") {
+                 katex.render(texText.data, mathElements[i], {
+                  displayMode: mathElements[i].classList.contains('display'),
+                  throwOnError: false,
+                  macros: macros,
+                  fleqn: false
+                 });
+              }}});
+              </script>
+              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" />
+              <link rel="stylesheet" href="custom.css" />
+         </head>
+   <body>
+            <!-- From https://getbootstrap.com/docs/4.5/components/navbar/ -->
+            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+               <a class="navbar-brand" href="#">Machine Learning synthesis</a>
+               <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav mr-auto">
+                     <li class="nav-item active">
+                        <a class="nav-link" href="index.html">Supervised <span class="sr-only">(current)</span></a>
+                     </li>
+                  </ul>
+               </div>
+
+            </nav>
+            <div class="container">
+         <h1 class="title">Image formation</h1>
+                  <div class="row">
+            <div class="col-xl-10"><h2 id="geometric-primitives">Geometric primitives</h2>
+<h3 id="real-projective-spaces-and-homogenous-coordinates">Real projective spaces and homogenous coordinates</h3>
+<p><span class="math display">
+\mathbb{P}^n = (\mathbb{R}^{n+1}  \setminus  \{0\}) / &quot;colinearity&quot;
+</span></p>
+<p>For <span class="math inline">x \in \mathbb{R}^n</span>, a point <span class="math inline">\tilde{x} \in \mathbb{P}^n</span> is associated (homogenous coordinates of <span class="math inline">x</span>), such as <span class="math inline">\tilde{x} = w \bar{x}</span> where <span class="math inline">\bar{x} = (x,1)</span> is the augmented vector of <span class="math inline">x</span></p>
+<p>In the projective space, points with a null last coordinate (<span class="math inline">w=0</span>) are called infinity points.</p>
+<h3 id="geometric-duality">Geometric duality</h3>
+<h4 id="d-lines">2D lines</h4>
+<p>The equation of a 2d line <span class="math inline">ax+by+c = 0</span> can be rewritten:</p>
+<p><span class="math display">
+\bar{x} \cdot \tilde{l} = 0
+</span></p>
+<p>where <span class="math inline">\tilde{l} = (a,b,c) \sim (\cos{\theta}, \sin{\theta}, d) \in \mathbb{P}^2</span></p>
+<ul>
+<li>Intersection between two lines: <span class="math inline">\tilde{x} = \tilde{l_1} \times \tilde{l_2}</span></li>
+<li>line between two points: <span class="math inline">\tilde{l} = \tilde{x_1} \times \tilde{x_2}</span></li>
+</ul>
+<h4 id="d-plane">3d plane</h4>
+<p>The equation of a 3d plane <span class="math inline">ax+by+cz+d = 0</span> can be rewritten:</p>
+<p><span class="math display">
+\bar{x} \cdot \tilde{m} = 0
+</span></p>
+<p>where <span class="math inline">\tilde{l} = (a,b,c) \sim (\cos{\theta}\cos{\phi}, \sin{\theta}\cos{\phi}, \sin{\phi}, \delta) \in \mathbb{P}^3</span></p>
+<h4 id="d-and-3d-conic-sections">2d and 3d conic sections</h4>
+<p>Conic sections can easily be represented by a quadric equation:</p>
+<p><span class="math display">
+\tilde{x}^T Q \tilde{x} = 0
+</span></p>
+<h2 id="geometric-transforms-2d-and-3d">Geometric transforms (2d and 3d)</h2>
+<table>
+<thead>
+<tr class="header">
+<th>name</th>
+<th>expression</th>
+<th>Dof (2d/3d)</th>
+<th>Preserves</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>homography</td>
+<td><span class="math inline">\tilde{x}&#39; = \tilde{H} \tilde{x}</span></td>
+<td>8/15</td>
+<td>straght lines</td>
+</tr>
+<tr class="even">
+<td>affine</td>
+<td><span class="math inline">x&#39; = A \bar{x}</span></td>
+<td>6/12</td>
+<td>parallelism</td>
+</tr>
+<tr class="odd">
+<td>similarity</td>
+<td><span class="math inline">x&#39; = [sR,t] \bar{x}</span></td>
+<td>4/7</td>
+<td>angles</td>
+</tr>
+<tr class="even">
+<td>euclidian</td>
+<td><span class="math inline">x&#39; = [R,t] \bar{x}</span></td>
+<td>3/6</td>
+<td>lenghts</td>
+</tr>
+<tr class="odd">
+<td>translation</td>
+<td><span class="math inline">x&#39; = t+x</span></td>
+<td>2/3</td>
+<td>orientation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="d-rotations">3d rotations</h3>
+<h4 id="rodriguez-formula">Rodriguez formula</h4>
+<p>For a rotation along <span class="math inline">n</span> with angle <span class="math inline">\theta</span> (Rodriguez formula):</p>
+<p><span class="math display">
+R(n,\theta) = I + \sin{\theta} [n]_{\times} + (1-\cos{\theta})[n]_{\times}^2
+</span></p>
+<p>where <span class="math inline">[n]_{\times}</span> is the matrix defined by <span class="math inline">n \times v = [n]_{\times} v</span></p>
+<h4 id="quaternions">Quaternions</h4>
+<p><span class="math inline">q \in \mathbb{H}</span> is a quaternion if <span class="math inline">q=a+ib+jc+kd</span> with <span class="math inline">i^2 = j^2 = k^2 = ijk = -1</span></p>
+<p>Some definitions:</p>
+<ul>
+<li><span class="math inline">Re(q) = a</span> and <span class="math inline">Im(q) = ib+jc+kd</span></li>
+<li><span class="math inline">\bar{q} = Re(q) - Im(q)</span></li>
+<li><span class="math inline">||q|| = q \bar{q}</span></li>
+<li><span class="math inline">q^{-1} = \frac{1}{||q||^2} \bar{q}</span></li>
+</ul>
+<p>A simple notation: <span class="math inline">q = a + \vec{v}</span> with <span class="math inline">\vec{v} = (b,c,d)</span>. Then quaternion products are easy to compute, by defining <span class="math inline">\vec{v} \vec{w} = \vec{v} \times \vec{w} - \vec{v} \cdot \vec{w}</span></p>
+<p>Then, a 3d rotation can be interpreted as a quaternion product.</p>
+<p>Let <span class="math inline">q_\alpha = \cos{\frac{\alpha}{2}} + \vec{u}\sin{\frac{\alpha}{2}}</span> with <span class="math inline">||\vec{u}||=1</span>, then the rotation of <span class="math inline">\vec{v}</span> along <span class="math inline">\vec{u}</span>, with angle <span class="math inline">\theta</span> is:</p>
+<p><span class="math display">
+q_\alpha \vec{v} q_\alpha^{-1}
+</span></p>
+<h2 id="d-to-2d-projections">3d to 2d projections</h2>
+<p>Here, <span class="math inline">x \in \mathbb{R}^2</span> and <span class="math inline">p \in \mathbb{R}^3</span></p>
+<h3 id="orthographic-projection">Orthographic projection</h3>
+<p>Correspond to just dropping the <span class="math inline">z</span> coordinate</p>
+<p><span class="math display">
+x = [I_2, O] p
+</span></p>
+<p>It can be scaled:</p>
+<p><span class="math display">
+x = [sI_2, O] p
+</span></p>
+<h3 id="perspective">Perspective</h3>
+<p><span class="math display">
+x = (\frac{p_x}{p_z}, \frac{p_y}{p_z})
+</span></p>
+<h3 id="camera">Camera</h3>
+<p>For a pinehole camera centered in <span class="math inline">O_c</span> with a proper basis (<span class="math inline">p_c</span> is the coordinate in camera basis)</p>
+<p><span class="math display">
+\tilde{x_s} = K p_c = K [R,t] p = P p
+</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">x_s</span> is in pixels coordinates</li>
+<li><span class="math inline">[R,t]</span> is the projection into matrix coordinate (external parameters)</li>
+<li><span class="math inline">K = \begin{pmatrix} f &amp; s &amp; c_x\\ 0 &amp; af &amp; c_y \\ 0 &amp; 0 &amp; 1 \end{pmatrix}</span> is the camera matrix (intrinsec parameters)</li>
+<li><span class="math inline">f</span> is the focal lenght and <span class="math inline">a</span> the aspect ratio</li>
+<li><span class="math inline">(c_x, c_y)</span> is the optical center in pixel coordinates (often <span class="math inline">(c_x, c_y) = (\frac{W}{2}, \frac{H}{2})</span> with <span class="math inline">(W,H)</span> is the image size (in pixels))</li>
+<li><span class="math inline">s</span> is the skew parameter (<span class="math inline">=0</span> for square pixels)</li>
+</ul>
+<p>It is often preferable to define:</p>
+<p><span class="math display">
+\tilde{P} = \begin{bmatrix}
+K &amp; 0\\
+0 &amp; 1
+\end{bmatrix} \begin{bmatrix}
+R &amp; t\\
+0 &amp; 1
+\end{bmatrix} = \tilde{K}E
+</span></p>
+<p>Then:</p>
+<p><span class="math display">
+x_s \sim \tilde{P} \bar{p}
+</span></p>
+<p>where <span class="math inline">x_s = (x_s, y_s, 1, d)</span> and <span class="math inline">\bar{p} = (p_x, p_y, p_z, 1)</span>, <span class="math inline">d</span> is the projective depth, which is not always present in photos, and need to be estimated for 3d reconstruction (stereo-matching…).</p>
+<h4 id="mapping-from-one-camera-to-another">Mapping from one camera to another:</h4>
+<p>For two cameras we have:</p>
+<p><span class="math display">
+\tilde{x_1} \sim \tilde{P_1} p =  \tilde{P_1} \tilde{P_0}^{-1} \tilde{x_0} = M_{10} \tilde{x_0}
+</span></p>
+<p>The matrix <span class="math inline">M_{10}</span> has a simple expression (which doesn’t require <span class="math inline">d</span>) in two cases:</p>
+<ul>
+<li>planar scene</li>
+<li>camera rotation</li>
+</ul>
+<h2 id="photometric-image-formation">Photometric image formation</h2>
+<p>radiance is used to define the enegy emitted in the frequence interval <span class="math inline">d \nu</span> in the solid angle <span class="math inline">d \omega = \sin{\theta} d\theta d \phi</span> through the surface <span class="math inline">d \sigma = dS cos{\theta}</span>:</p>
+<p><span class="math display">
+d \mathcal{E}_\nu = L_\nu d \sigma d \nu d \Omega dt
+</span></p>
+<p>Then, the out radiance (reflexion of light) in direction <span class="math inline">\omega_r</span> is defindes as:</p>
+<p><span class="math display">
+L_\nu (\omega_r) = \int_{2\pi} f_\nu(\omega_i, \omega_r) L_\nu(\omega_i) d \omega_i
+</span></p>
+<p>where <span class="math inline">f_\nu</span> is a probabilistic distibution which represents the probability for an incident photon to be reflected in <span class="math inline">d \omega_r</span> along <span class="math inline">\omega_r</span>.</p>
+<p><span class="math inline">\rightarrow</span> Phong shading model</p>
+<h2 id="optics-digital-camera">Optics, Digital camera…</h2>
+<h2 id="color">Color</h2>
+<p><img src="img/CIE-RGB.png" style="width:20.0%" /></p>
+<h3 id="xyz-space">XYZ space</h3>
+<p>Properties:</p>
+<ul>
+<li>Y is the luminance (perceived relative brightness)</li>
+<li>pure white is a diagonal equal-valued vector</li>
+</ul>
+<p><span class="math display">
+\begin{bmatrix}
+X \\
+Y \\
+Z \\
+\end{bmatrix} = \frac{1}{0.17697}
+\begin{bmatrix}
+0.49 &amp; 0.31 &amp; 0.20 \\
+0.17697 &amp; 0.81240 &amp; 0.01063 \\
+0.00 &amp; 0.01 &amp; 0.99 \\
+\end{bmatrix}
+\begin{bmatrix}
+R \\
+G \\
+B \\
+\end{bmatrix}
+</span></p></div>
+            <div class="d-none d-xl-block col-xl-2 bd-toc">
+               <ul class="section-nav">
+                  <li class="toc-entry"><ul>
+<li><a href="#geometric-primitives">Geometric primitives</a>
+<ul>
+<li><a href="#real-projective-spaces-and-homogenous-coordinates">Real projective spaces and homogenous coordinates</a></li>
+<li><a href="#geometric-duality">Geometric duality</a></li>
+</ul></li>
+<li><a href="#geometric-transforms-2d-and-3d">Geometric transforms (2d and 3d)</a>
+<ul>
+<li><a href="#d-rotations">3d rotations</a></li>
+</ul></li>
+<li><a href="#d-to-2d-projections">3d to 2d projections</a>
+<ul>
+<li><a href="#orthographic-projection">Orthographic projection</a></li>
+<li><a href="#perspective">Perspective</a></li>
+<li><a href="#camera">Camera</a></li>
+</ul></li>
+<li><a href="#photometric-image-formation">Photometric image formation</a></li>
+<li><a href="#optics-digital-camera">Optics, Digital camera…</a></li>
+<li><a href="#color">Color</a>
+<ul>
+<li><a href="#xyz-space">XYZ space</a></li>
+</ul></li>
+</ul></li>
+               </ul>
+            </div>
+         </div>
+               </div>
+            <!-- Add comment hosting service here -->
+            <!-- Footer -->
+            <footer class="footer text-muted">
+               <div align="center">
+                  <!-- Update licences -->
+                  Content is available under <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>
+                  &nbsp;|&nbsp;
+                  Sourcecode licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank" rel="noopener">GPL-3.0</a>
+                  <br />
+                  <!-- Please keep the following line -->
+                  Built with <a href="https://www.pandoc.org" target="_blank" rel="noopener">Pandoc</a> 
+                  using <a href="https://github.com/ashki23/pandoc-bootstrap" target="_blank" rel="noopener">pandoc-bootstrap</a> theme
+                  <br />
+                  <!-- Update copyright -->
+                  Copyright, Author Name
+               </div>
+            </footer>
+            <!-- Add global site tag (gtag.js) and site analytics here -->
+            <!-- JS, Popper.js, and jQuery -->
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+      <!-- Mathjax -->
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script>
+         /* Bootstrap styles to tables */
+         function bootstrapStylePandocTables() {
+         $('tr.header').parent('thead').parent('table').addClass('table table-condensed'); }
+         $(document).ready(function () { bootstrapStylePandocTables(); });
+         /* Adjust the height when click the toc */
+         var shiftWindow = function() { scrollBy(0, -60) };
+         window.addEventListener("hashchange", shiftWindow);
+         function load() { if (window.location.hash) shiftWindow(); }
+      </script>
+   </body>
+</html>
