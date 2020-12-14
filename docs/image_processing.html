@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="generator" content="pandoc">
+      <meta name="author" content="Louis Lesueur">
+      
+      <title>Image processing</title>
+      <!-- Bootstrap -->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+      <!-- Font-awesome -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <!-- Styles -->
+      <link rel="stylesheet" href="https://ashki23.github.io/styles.css">
+            <!-- Add favicon here -->
+            <!-- Add site-verifications here -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.js"></script>
+              <script>document.addEventListener("DOMContentLoaded", function () {
+               var mathElements = document.getElementsByClassName("math");
+               var macros = [];
+               for (var i = 0; i < mathElements.length; i++) {
+                var texText = mathElements[i].firstChild;
+                if (mathElements[i].tagName == "SPAN") {
+                 katex.render(texText.data, mathElements[i], {
+                  displayMode: mathElements[i].classList.contains('display'),
+                  throwOnError: false,
+                  macros: macros,
+                  fleqn: false
+                 });
+              }}});
+              </script>
+              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" />
+              <link rel="stylesheet" href="custom.css" />
+         </head>
+   <body>
+            <!-- From https://getbootstrap.com/docs/4.5/components/navbar/ -->
+            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+               <a class="navbar-brand" href="#">Machine Learning synthesis</a>
+               <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                       <a class="nav-link" href="index.html">Supervised <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item active">
+                       <a class="nav-link" href="image_processing.html">Supervised <span class="sr-only">(current)</span></a>
+                    </li>
+                  </ul>
+               </div>
+
+            </nav>
+            <div class="container">
+         <h1 class="title">Image processing</h1>
+                  <div class="row">
+            <div class="col-xl-10"><h2 id="pixel-transforms">Pixel transforms</h2>
+<p>An image can be seen as a function: <span class="math display">
+I: \mathcal{D} \rightarrow \mathcal{C}
+</span></p>
+<p>Where <span class="math inline">\mathcal{D}</span> is the domain (<span class="math inline">\mathbb{R}^2</span> for a continuous image, a grid of pixels for a difital picture). And <span class="math inline">\mathcal{C}</span> is a color-space.</p>
+<h3 id="some-pixel-transforms">Some pixel transforms</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>transform</th>
+<th>formula</th>
+<th>effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>affine</td>
+<td><span class="math inline">a I(x) + b</span></td>
+<td>contrast and brightness (coarse)</td>
+</tr>
+<tr class="even">
+<td>linar blend</td>
+<td><span class="math inline">\alpha I_1(x) + (1-\alpha)I_2(x)</span></td>
+<td>To perform transitions</td>
+</tr>
+<tr class="odd">
+<td>gamma correction</td>
+<td><span class="math inline">I(x)^{\frac{1}{\gamma}}</span></td>
+<td>To invert the gamma mapping applied by the sensor (<span class="math inline">\gamma \simeq 2.2</span> for a digital camera)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="compositing-and-matting">Compositing and matting</h3>
+<p>Composition equation (<span class="math inline">B</span> is the background, <span class="math inline">F</span> the foreground and <span class="math inline">\alpha</span> the relative amount of opacity): <span class="math display">
+C = (1-\alpha)B + \alpha F
+</span></p>
+<h3 id="histogram">Histogram</h3>
+<p><span class="math display">
+H_I(i) = |\{x, I(x)=i\}|
+</span></p>
+<p>Cumulative</p>
+<p><span class="math display">
+C_I(i) = |\{x, I(x)&lt;i\}|
+</span></p>
+<ul>
+<li><p>Histogram equalization: better to tune brightness and contrasts. Goal: find a mapping <span class="math inline">f(I)</span> such as its histogram is equalized. This is easy by remarking that <span class="math inline">C_{f \circ I} = C_I \circ f^{-1}</span></p></li>
+<li><p>Adaptative histogram equalization:</p></li>
+</ul>
+<h2 id="linear-filtering">Linear filtering</h2>
+<p>To perform linear filtering, let introduce convolution and correlation operators between an image <span class="math inline">I</span> and a kernel <span class="math inline">K</span>.</p>
+<p>Both of them are linear shift inavariant.</p>
+<h3 id="correlation">Correlation:</h3>
+<p>Correlation operator, written <span class="math inline">O = I \oplus K</span>, is defined by</p>
+<p>with (discrete case): <span class="math display">
+O(i,j) = \sum_{k,l} I(i+k,j+l)K(k,l)
+</span></p>
+<h3 id="convolution">Convolution:</h3>
+<p>Convolution operator, written <span class="math inline">O = I*K</span>, is defined by</p>
+<p>with (discrete case): <span class="math display">
+O(i,j) = \sum_{k,l} I(k,l) K(i-k, j-l) = \sum_{k,l} I(i-k,j-l)K(k,l)
+</span></p>
+<h3 id="padding">Padding</h3>
+<p>To apply them on finite images, one need to introduce padding</p>
+<ul>
+<li>zero</li>
+<li>constant</li>
+<li>clamp</li>
+<li>wrap</li>
+<li>mirror</li>
+<li>extended</li>
+</ul>
+<h3 id="separable-filtering">Separable filtering</h3>
+<p>A convolution kernel <span class="math inline">K</span> is separable in a horizontal kernel <span class="math inline">h</span> and a vertical kernel <span class="math inline">v</span> (reduce the number of operation from <span class="math inline">k^2</span> per pixel to <span class="math inline">2k</span> per pixel):</p>
+<p><span class="math display">
+K = vh^T
+</span></p>
+<p>To see if a kernel is separable, compute SVD and see if all the singular values but one are non 0.</p>
+<h2 id="summed-area-table-integral-image">Summed area table (integral image)</h2>
+<h2 id="non-linear-filtering">Non-linear filtering</h2>
+<ul>
+<li>Median filtering</li>
+<li><span class="math inline">\alpha</span>-trimmed mean</li>
+<li>weighted median</li>
+<li>Bilateral filtering</li>
+</ul>
+<h2 id="morphology">Morphology</h2></div>
+            <div class="d-none d-xl-block col-xl-2 bd-toc">
+               <ul class="section-nav">
+                  <li class="toc-entry"><ul>
+<li><a href="#pixel-transforms">Pixel transforms</a>
+<ul>
+<li><a href="#some-pixel-transforms">Some pixel transforms</a></li>
+<li><a href="#compositing-and-matting">Compositing and matting</a></li>
+<li><a href="#histogram">Histogram</a></li>
+</ul></li>
+<li><a href="#linear-filtering">Linear filtering</a>
+<ul>
+<li><a href="#correlation">Correlation:</a></li>
+<li><a href="#convolution">Convolution:</a></li>
+<li><a href="#padding">Padding</a></li>
+<li><a href="#separable-filtering">Separable filtering</a></li>
+</ul></li>
+<li><a href="#summed-area-table-integral-image">Summed area table (integral image)</a></li>
+<li><a href="#non-linear-filtering">Non-linear filtering</a></li>
+<li><a href="#morphology">Morphology</a></li>
+</ul></li>
+               </ul>
+            </div>
+         </div>
+               </div>
+            <!-- Add comment hosting service here -->
+            <!-- Footer -->
+            <footer class="footer text-muted">
+               <div align="center">
+                  <!-- Update licences -->
+                  Content is available under <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>
+                  &nbsp;|&nbsp;
+                  Sourcecode licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank" rel="noopener">GPL-3.0</a>
+                  <br />
+                  <!-- Please keep the following line -->
+                  Built with <a href="https://www.pandoc.org" target="_blank" rel="noopener">Pandoc</a> 
+                  using <a href="https://github.com/ashki23/pandoc-bootstrap" target="_blank" rel="noopener">pandoc-bootstrap</a> theme
+                  <br />
+                  <!-- Update copyright -->
+                  Copyright, Author Name
+               </div>
+            </footer>
+            <!-- Add global site tag (gtag.js) and site analytics here -->
+            <!-- JS, Popper.js, and jQuery -->
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+      <!-- Mathjax -->
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script>
+         /* Bootstrap styles to tables */
+         function bootstrapStylePandocTables() {
+         $('tr.header').parent('thead').parent('table').addClass('table table-condensed'); }
+         $(document).ready(function () { bootstrapStylePandocTables(); });
+         /* Adjust the height when click the toc */
+         var shiftWindow = function() { scrollBy(0, -60) };
+         window.addEventListener("hashchange", shiftWindow);
+         function load() { if (window.location.hash) shiftWindow(); }
+      </script>
+   </body>
+</html>
