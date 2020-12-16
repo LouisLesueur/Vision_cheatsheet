@@ -36,14 +36,14 @@
    <body>
             <!-- From https://getbootstrap.com/docs/4.5/components/navbar/ -->
             <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-               <a class="navbar-brand" href="#">Machine Learning synthesis</a>
+               <a class="navbar-brand" href="#">Computer vision synthesis</a>
                <div class="collapse navbar-collapse" id="navbarSupportedContent">
                   <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                       <a class="nav-link" href="index.html">Supervised <span class="sr-only">(current)</span></a>
+                       <a class="nav-link" href="index.html">Image formation <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item active">
-                       <a class="nav-link" href="image_processing.html">Supervised <span class="sr-only">(current)</span></a>
+                       <a class="nav-link" href="image_processing.html">Image processing <span class="sr-only">(current)</span></a>
                     </li>
                   </ul>
                </div>
@@ -52,11 +52,32 @@
             <div class="container">
          <h1 class="title">Image processing</h1>
                   <div class="row">
-            <div class="col-xl-10"><h2 id="pixel-transforms">Pixel transforms</h2>
+            <div class="col-xl-10"><h2 id="images-as-functions">Images as functions</h2>
 <p>An image can be seen as a function: <span class="math display">
 I: \mathcal{D} \rightarrow \mathcal{C}
 </span></p>
 <p>Where <span class="math inline">\mathcal{D}</span> is the domain (<span class="math inline">\mathbb{R}^2</span> for a continuous image, a grid of pixels for a difital picture). And <span class="math inline">\mathcal{C}</span> is a color-space.</p>
+<h3 id="histogram">Histogram</h3>
+<p><span class="math display">
+H_I(i) = |\{x, I(x)=i\}|
+</span></p>
+<p>Cumulative</p>
+<p><span class="math display">
+C_I(i) = |\{x, I(x)&lt;i\}|
+</span></p>
+<ul>
+<li><p>Histogram equalization: better to tune brightness and contrasts. Goal: find a mapping <span class="math inline">f(I)</span> such as its histogram is equalized. This is easy by remarking that <span class="math inline">C_{f \circ I} = C_I \circ f^{-1}</span></p></li>
+<li><p>Adaptative histogram equalization:</p></li>
+</ul>
+<h3 id="summed-area-table">Summed area table</h3>
+<p>Integral image:</p>
+<p><span class="math display">
+s(i,j) = \sum_{k=0}^i \sum_{k=0}^j I(k,l)
+</span></p>
+<p>Summed area table: <span class="math display">
+S(i_0 \dots i_1, j_0 \dots j_1) = \sum_{i=i_0}^{i_1} \sum_{j=j_0}^{j_1} s(i_1, j_1) - s(i_1, j_0-1) - s(i_0-1,j_1) + s(i_0-1, j_0-1)
+</span></p>
+<h2 id="pixel-transforms">Pixel transforms</h2>
 <h3 id="some-pixel-transforms">Some pixel transforms</h3>
 <table>
 <colgroup>
@@ -93,23 +114,11 @@ I: \mathcal{D} \rightarrow \mathcal{C}
 <p>Composition equation (<span class="math inline">B</span> is the background, <span class="math inline">F</span> the foreground and <span class="math inline">\alpha</span> the relative amount of opacity): <span class="math display">
 C = (1-\alpha)B + \alpha F
 </span></p>
-<h3 id="histogram">Histogram</h3>
-<p><span class="math display">
-H_I(i) = |\{x, I(x)=i\}|
-</span></p>
-<p>Cumulative</p>
-<p><span class="math display">
-C_I(i) = |\{x, I(x)&lt;i\}|
-</span></p>
-<ul>
-<li><p>Histogram equalization: better to tune brightness and contrasts. Goal: find a mapping <span class="math inline">f(I)</span> such as its histogram is equalized. This is easy by remarking that <span class="math inline">C_{f \circ I} = C_I \circ f^{-1}</span></p></li>
-<li><p>Adaptative histogram equalization:</p></li>
-</ul>
 <h2 id="linear-filtering">Linear filtering</h2>
 <p>To perform linear filtering, let introduce convolution and correlation operators between an image <span class="math inline">I</span> and a kernel <span class="math inline">K</span>.</p>
 <p>Both of them are linear shift inavariant.</p>
 <h3 id="correlation">Correlation:</h3>
-<p>Correlation operator, written <span class="math inline">O = I \oplus K</span>, is defined by</p>
+<p>Correlation operator, written <span class="math inline">O = I \otimes K</span>, is defined by</p>
 <p>with (discrete case): <span class="math display">
 O(i,j) = \sum_{k,l} I(i+k,j+l)K(k,l)
 </span></p>
@@ -128,13 +137,34 @@ O(i,j) = \sum_{k,l} I(k,l) K(i-k, j-l) = \sum_{k,l} I(i-k,j-l)K(k,l)
 <li>mirror</li>
 <li>extended</li>
 </ul>
+<h3 id="list-of-filters">List of filters</h3>
+<table>
+<thead>
+<tr class="header">
+<th>name</th>
+<th>expression</th>
+<th>effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>box</td>
+<td><span class="math inline">K(i,j) = \frac{1}{k}</span></td>
+<td>bluring</td>
+</tr>
+<tr class="even">
+<td>Bartlett (tent)</td>
+<td>$K(i,j) =</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <h3 id="separable-filtering">Separable filtering</h3>
 <p>A convolution kernel <span class="math inline">K</span> is separable in a horizontal kernel <span class="math inline">h</span> and a vertical kernel <span class="math inline">v</span> (reduce the number of operation from <span class="math inline">k^2</span> per pixel to <span class="math inline">2k</span> per pixel):</p>
 <p><span class="math display">
 K = vh^T
 </span></p>
 <p>To see if a kernel is separable, compute SVD and see if all the singular values but one are non 0.</p>
-<h2 id="summed-area-table-integral-image">Summed area table (integral image)</h2>
 <h2 id="non-linear-filtering">Non-linear filtering</h2>
 <ul>
 <li>Median filtering</li>
@@ -142,26 +172,85 @@ K = vh^T
 <li>weighted median</li>
 <li>Bilateral filtering</li>
 </ul>
-<h2 id="morphology">Morphology</h2></div>
+<h2 id="morphology-operations">Morphology operations</h2>
+<p>Here: !(https://dpt-info.u-strasbg.fr/~cronse/TIDOC/index.html)</p>
+<p><span class="math display">
+\theta(I,t) = \mathbb{1}_{I&gt;t}
+</span></p>
+<ul>
+<li>dilatation: <span class="math inline">\theta(I,t)</span></li>
+</ul>
+<h2 id="distance-transforms">Distance transforms</h2>
+<h2 id="fourier-transforms">Fourier transforms</h2>
+<h3 id="wiener-filtering">Wiener filtering</h3>
+<p>Let suppose that we have to debulr an image <span class="math inline">I</span>, which has been formed by bluring an initial image, convolved by a filter <span class="math inline">k</span>:</p>
+<p><span class="math display">
+I = S*K + N
+</span></p>
+<p>In Fourier domain:</p>
+<p><span class="math display">
+\hat{I} = \hat{S} \hat{K} + \hat{N}
+</span></p>
+<p>We have:</p>
+<p><span class="math display">
+p(\hat{S} | \hat{I}) = \frac{p(\hat{\hat{S} | I}) p(\hat{S})}{p(\hat{I})}
+</span></p>
+<p>Let suppose that <span class="math inline">N</span> is a white gaussian noise with 0 mean and <span class="math inline">\sigma_n</span> variance, and that the prior distribution of <span class="math inline">S</span> has the form:</p>
+<p><span class="math display">
+p(\hat{S}) = e^{-\frac{\hat{S}}{2 \sigma_s^2}}
+</span></p>
+<p>Then, the log likelihood is:</p>
+<p><span class="math display">
+\mathcal{L}(\hat{S}) = \frac{\hat{S}}{2 \sigma_s^2} + \frac{(\hat{S} \hat{K} - \hat{I})^2}{2 \sigma_n^2} + \log(p(\hat{I}))
+</span></p>
+<p>And it is maximized by:</p>
+<p><span class="math display">
+S_{opt} = \frac{\hat{K}^*}{K^2 + \frac{\sigma_n^2}{\sigma_s^2}} \hat{I} = \hat{W} \hat{I}
+</span></p>
+<p>Where <span class="math inline">\hat{W}</span> is the Weiner filter. In practice <span class="math inline">\frac{\sigma_n^2}{\sigma_s^2}</span> is unknown and is considered as an hyperparameter to tune.</p>
+<p>Note that the gaussian assumptions are not required, and it can be shown that Weiner filter is in fact the one which minimizes the least squares in general.</p>
+<h2 id="pyramids-and-wavelets">Pyramids and wavelets</h2>
+<h3 id="interpolation">Interpolation</h3>
+<h3 id="decimation">Decimation</h3>
+<h3 id="multi-resolution-representations">Multi-resolution representations</h3>
+<h3 id="wavelets">Wavelets</h3>
+<h2 id="global-optimization">Global optimization</h2></div>
             <div class="d-none d-xl-block col-xl-2 bd-toc">
                <ul class="section-nav">
                   <li class="toc-entry"><ul>
+<li><a href="#images-as-functions">Images as functions</a>
+<ul>
+<li><a href="#histogram">Histogram</a></li>
+<li><a href="#summed-area-table">Summed area table</a></li>
+</ul></li>
 <li><a href="#pixel-transforms">Pixel transforms</a>
 <ul>
 <li><a href="#some-pixel-transforms">Some pixel transforms</a></li>
 <li><a href="#compositing-and-matting">Compositing and matting</a></li>
-<li><a href="#histogram">Histogram</a></li>
 </ul></li>
 <li><a href="#linear-filtering">Linear filtering</a>
 <ul>
 <li><a href="#correlation">Correlation:</a></li>
 <li><a href="#convolution">Convolution:</a></li>
 <li><a href="#padding">Padding</a></li>
+<li><a href="#list-of-filters">List of filters</a></li>
 <li><a href="#separable-filtering">Separable filtering</a></li>
 </ul></li>
-<li><a href="#summed-area-table-integral-image">Summed area table (integral image)</a></li>
 <li><a href="#non-linear-filtering">Non-linear filtering</a></li>
-<li><a href="#morphology">Morphology</a></li>
+<li><a href="#morphology-operations">Morphology operations</a></li>
+<li><a href="#distance-transforms">Distance transforms</a></li>
+<li><a href="#fourier-transforms">Fourier transforms</a>
+<ul>
+<li><a href="#wiener-filtering">Wiener filtering</a></li>
+</ul></li>
+<li><a href="#pyramids-and-wavelets">Pyramids and wavelets</a>
+<ul>
+<li><a href="#interpolation">Interpolation</a></li>
+<li><a href="#decimation">Decimation</a></li>
+<li><a href="#multi-resolution-representations">Multi-resolution representations</a></li>
+<li><a href="#wavelets">Wavelets</a></li>
+</ul></li>
+<li><a href="#global-optimization">Global optimization</a></li>
 </ul></li>
                </ul>
             </div>
