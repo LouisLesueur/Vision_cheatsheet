@@ -134,7 +134,7 @@ On $E=\mathbb{Z}^2$ (but works for $\mathbb{R}^d$), let $B \subset E$ be a "stru
 
 Then, one can define dilatation operation:
 
-+ $\delta_B(X) = X \oplus B = \{b+x | b \in B, x \in X\} = \bigcup_{x \in X} B_x
++ $\delta_B(X) = X \oplus B = \{b+x | b \in B, x \in X\} = \bigcup_{x \in X} B_x$
 
 ![](img/dil.png){width=30%}
 
@@ -144,9 +144,31 @@ And erosion:
 
 ![](img/eros.png){width=30%}
 
+Opening:
+
++ $\gamma_B(X) = X \circ B = \delta_B(\epsilon_B(X))$
+
+Closing:
+
++ $\phi_B(X) = X \bullet B = \epsilon_B(\delta_B(X))$
+
+Morphological (Beucher) gradient:
+
++ $\nabla_B(X) = \delta_B(X) - \epsilon_B(X)$
+
+Morphological laplacian:
+
++ $\Delta_B(X) = \delta_B(X) + \epsilon_B(X) - 2 \text{id} (X)$
+
 ## Distance transforms
 
+For a binary image $B$
 
+$$
+D(i,j) = \min_{k,l | B(k,l)=0} d(i-k,j-l)
+$$
+
+with $d$ the Manhatan or the euclidian distance.
 
 ## Fourier transforms
 
@@ -167,7 +189,7 @@ $$
 We have:
 
 $$
-p(\hat{S} | \hat{I}) = \frac{p(\hat{\hat{S} | I}) p(\hat{S})}{p(\hat{I})}
+p(\hat{S} | \hat{I}) = \frac{p(\hat{S} | \hat{I}) p(\hat{S})}{p(\hat{I})}
 $$
 
 Let suppose that $N$ is a white gaussian noise with 0 mean and $\sigma_n$ variance, and that the prior distribution of $S$ has the form:
@@ -196,9 +218,48 @@ Note that the gaussian assumptions are not required, and it can be shown that We
 
 ### Interpolation
 
+To interpolate an image to a higher resolution:
+
+$$
+G(i,j) = \sum_{k,l} I(k,l) K(i-rk, j-rl)
+$$
+
+Where $K$ is a spline function. The most used is the based on the cubic kernel (often $a=-1$ or $a=-0.5$):
+
+$$
+K(x) = \left\{
+    \begin{array}{ll}
+        1-(a+3)x^2+(a+2)|x|^3 & \text{if  } |x|<1 \\
+        a(|x|-1)(|x|-2)^2 & \text{if  } 1 \leq |x| < 2 \\
+        0 & \text{else}
+    \end{array}
+\right.
+$$
+
 ### Decimation
 
+To interpolate an image to a smaller resolution:
+
+$$
+G(i,j) = \sum_{k,l} I(k,l) K(ri-k, rj-l)
+$$
+
 ### Multi-resolution representations
+
+laplacian pyramid construction principle, with reconstruction:
+
+![](img/laplacian.png){width=50%}
+
+Applications:
+
++ Texture synthesis
++ Image compression
++ Noise removal
++ Image blending (from rwo input images and an input mask):
+
+![](img/blend.png){width=50%}
+
++ EulerianVideo Magnification
 
 ### Wavelets
 

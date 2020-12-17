@@ -174,13 +174,39 @@ K = vh^T
 </ul>
 <h2 id="morphology-operations">Morphology operations</h2>
 <p>Here: !(https://dpt-info.u-strasbg.fr/~cronse/TIDOC/index.html)</p>
-<p><span class="math display">
-\theta(I,t) = \mathbb{1}_{I&gt;t}
-</span></p>
+<p>On <span class="math inline">E=\mathbb{Z}^2</span> (but works for <span class="math inline">\mathbb{R}^d</span>), let <span class="math inline">B \subset E</span> be a “structuring element”. For <span class="math inline">x \in E</span> let note: <span class="math inline">B_x = \{b+x | b \in B\}</span></p>
+<p>Then, one can define dilatation operation:</p>
 <ul>
-<li>dilatation: <span class="math inline">\theta(I,t)</span></li>
+<li><span class="math inline">\delta_B(X) = X \oplus B = \{b+x | b \in B, x \in X\} = \bigcup_{x \in X} B_x</span></li>
+</ul>
+<p><img src="img/dil.png" style="width:30.0%" /></p>
+<p>And erosion:</p>
+<ul>
+<li><span class="math inline">\epsilon_B(X) = X \ominus B = \{ x | B_x \subset X \}</span></li>
+</ul>
+<p><img src="img/eros.png" style="width:30.0%" /></p>
+<p>Opening:</p>
+<ul>
+<li><span class="math inline">\gamma_B(X) = X \circ B = \delta_B(\epsilon_B(X))</span></li>
+</ul>
+<p>Closing:</p>
+<ul>
+<li><span class="math inline">\phi_B(X) = X \bullet B = \epsilon_B(\delta_B(X))</span></li>
+</ul>
+<p>Morphological (Beucher) gradient:</p>
+<ul>
+<li><span class="math inline">\nabla_B(X) = \delta_B(X) - \epsilon_B(X)</span></li>
+</ul>
+<p>Morphological laplacian:</p>
+<ul>
+<li><span class="math inline">\Delta_B(X) = \delta_B(X) + \epsilon_B(X) - 2 \text{id} (X)</span></li>
 </ul>
 <h2 id="distance-transforms">Distance transforms</h2>
+<p>For a binary image <span class="math inline">B</span></p>
+<p><span class="math display">
+D(i,j) = \min_{k,l | B(k,l)=0} d(i-k,j-l)
+</span></p>
+<p>with <span class="math inline">d</span> the Manhatan or the euclidian distance.</p>
 <h2 id="fourier-transforms">Fourier transforms</h2>
 <h3 id="wiener-filtering">Wiener filtering</h3>
 <p>Let suppose that we have to debulr an image <span class="math inline">I</span>, which has been formed by bluring an initial image, convolved by a filter <span class="math inline">k</span>:</p>
@@ -193,7 +219,7 @@ I = S*K + N
 </span></p>
 <p>We have:</p>
 <p><span class="math display">
-p(\hat{S} | \hat{I}) = \frac{p(\hat{\hat{S} | I}) p(\hat{S})}{p(\hat{I})}
+p(\hat{S} | \hat{I}) = \frac{p(\hat{S} | \hat{I}) p(\hat{S})}{p(\hat{I})}
 </span></p>
 <p>Let suppose that <span class="math inline">N</span> is a white gaussian noise with 0 mean and <span class="math inline">\sigma_n</span> variance, and that the prior distribution of <span class="math inline">S</span> has the form:</p>
 <p><span class="math display">
@@ -211,8 +237,39 @@ S_{opt} = \frac{\hat{K}^*}{K^2 + \frac{\sigma_n^2}{\sigma_s^2}} \hat{I} = \hat{W
 <p>Note that the gaussian assumptions are not required, and it can be shown that Weiner filter is in fact the one which minimizes the least squares in general.</p>
 <h2 id="pyramids-and-wavelets">Pyramids and wavelets</h2>
 <h3 id="interpolation">Interpolation</h3>
+<p>To interpolate an image to a higher resolution:</p>
+<p><span class="math display">
+G(i,j) = \sum_{k,l} I(k,l) K(i-rk, j-rl)
+</span></p>
+<p>Where <span class="math inline">K</span> is a spline function. The most used is the based on the cubic kernel (often <span class="math inline">a=-1</span> or <span class="math inline">a=-0.5</span>):</p>
+<p><span class="math display">
+K(x) = \left\{
+    \begin{array}{ll}
+        1-(a+3)x^2+(a+2)|x|^3 &amp; \text{if  } |x|&lt;1 \\
+        a(|x|-1)(|x|-2)^2 &amp; \text{if  } 1 \leq |x| &lt; 2 \\
+        0 &amp; \text{else}
+    \end{array}
+\right.
+</span></p>
 <h3 id="decimation">Decimation</h3>
+<p>To interpolate an image to a smaller resolution:</p>
+<p><span class="math display">
+G(i,j) = \sum_{k,l} I(k,l) K(ri-k, rj-l)
+</span></p>
 <h3 id="multi-resolution-representations">Multi-resolution representations</h3>
+<p>laplacian pyramid construction principle, with reconstruction:</p>
+<p><img src="img/laplacian.png" style="width:50.0%" /></p>
+<p>Applications:</p>
+<ul>
+<li>Texture synthesis</li>
+<li>Image compression</li>
+<li>Noise removal</li>
+<li>Image blending (from rwo input images and an input mask):</li>
+</ul>
+<p><img src="img/blend.png" style="width:50.0%" /></p>
+<ul>
+<li>EulerianVideo Magnification</li>
+</ul>
 <h3 id="wavelets">Wavelets</h3>
 <h2 id="global-optimization">Global optimization</h2></div>
             <div class="d-none d-xl-block col-xl-2 bd-toc">
