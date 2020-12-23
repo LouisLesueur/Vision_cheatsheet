@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="generator" content="pandoc">
+      <meta name="author" content="Louis Lesueur">
+      
+      <title>Feature processing</title>
+      <!-- Bootstrap -->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+      <!-- Font-awesome -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <!-- Styles -->
+      <link rel="stylesheet" href="https://ashki23.github.io/styles.css">
+            <!-- Add favicon here -->
+            <!-- Add site-verifications here -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.js"></script>
+              <script>document.addEventListener("DOMContentLoaded", function () {
+               var mathElements = document.getElementsByClassName("math");
+               var macros = [];
+               for (var i = 0; i < mathElements.length; i++) {
+                var texText = mathElements[i].firstChild;
+                if (mathElements[i].tagName == "SPAN") {
+                 katex.render(texText.data, mathElements[i], {
+                  displayMode: mathElements[i].classList.contains('display'),
+                  throwOnError: false,
+                  macros: macros,
+                  fleqn: false
+                 });
+              }}});
+              </script>
+              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" />
+              <link rel="stylesheet" href="custom.css" />
+         </head>
+   <body>
+            <!-- From https://getbootstrap.com/docs/4.5/components/navbar/ -->
+            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+               <a class="navbar-brand" href="#">Computer vision synthesis</a>
+               <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                       <a class="nav-link" href="index.html">Image formation <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item active">
+                       <a class="nav-link" href="image_processing.html">Image processing <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li>
+                      <a class="nav-link" href="feature_processing.html">Feature processing <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li>
+                      <a class="nav-link" href="segmentation.html">Image segmentation <span class="sr-only">(current)</span></a>
+                    </li>
+                  </ul>
+               </div>
+
+            </nav>
+            <div class="container">
+         <h1 class="title">Feature processing</h1>
+                  <div class="row">
+            <div class="col-xl-10"><h2 id="feature-detection">Feature detection</h2>
+<h2 id="feature-matching">Feature matching</h2>
+<h2 id="feature-alignment">Feature alignment</h2>
+<h3 id="d-alignment-with-least-squares-usefull-for-panography">2D alignment with least squares (usefull for panography)</h3>
+<p>Given a set of matched feature points <span class="math inline">(x,x&#39;)</span> in two images, one can infer a transformation of the form <span class="math inline">x&#39;=f_p(x)</span> with parameters <span class="math inline">p</span> that can be found by minimizing the linear least square energy: <span class="math display">
+E_{LLS} = \sum_i ||x_i&#39;-f_p(x_i)||^2
+</span></p>
+<p>For simple transforms, we have: <span class="math inline">\Delta x = x&#39;-x = J(x)p</span>, where <span class="math inline">J</span> is the jacobian. The problem becomes equivalent to solving the system: <span class="math display">
+Ab = p
+</span> with:</p>
+<ul>
+<li><span class="math inline">A = \sum_i J^T(x_i) J(x_i)</span></li>
+<li><span class="math inline">b = \sum_i J^T(x_i) \Delta x_i</span></li>
+</ul>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Transfoorm</th>
+<th> Jacobian</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>translation</td>
+<td><span class="math inline">\begin{pmatrix} 1 &amp; 0\\ 0 &amp; 1 \\ \end{pmatrix}</span></td>
+</tr>
+<tr class="even">
+<td>euclidian</td>
+<td><span class="math inline">\begin{pmatrix} 1 &amp; 0 &amp; -s_\theta x - c_\theta y\\ 0 &amp; 1 &amp; c_\theta x - s_\theta y\\ \end{pmatrix}</span></td>
+</tr>
+<tr class="odd">
+<td>similarity</td>
+<td><span class="math inline">\begin{pmatrix} 1 &amp; 0 &amp; x &amp; - y\\ 0 &amp; 1 &amp; y &amp; x\\ \end{pmatrix}</span></td>
+</tr>
+<tr class="even">
+<td>affine</td>
+<td><span class="math inline">\begin{pmatrix} 1 &amp; 0 &amp; x &amp; y &amp; 0 &amp; 0\\ 0 &amp; 1 &amp; 0 &amp; 0 &amp; x &amp; y\\ \end{pmatrix}</span></td>
+</tr>
+</tbody>
+</table>
+<p>Variants such as weighted least squares and covariant weighted least squares can be used.</p>
+<h3 id="robust-least-square-and-ransac">Robust least square and RANSAC</h3>
+<p>When there are robust outliers:</p>
+<p><span class="math display">
+E_{RLS}(\Delta p) = \sum_i \rho(||r_i||)
+</span></p>
+<p>with <span class="math inline">r_i=f_p(x_i)-x_i&#39;</span> the residuals, and <span class="math inline">\rho</span> a wrobust penalty.</p>
+<p>weighted:</p>
+<p><span class="math display">
+E_{IRLS}(\Delta p) = \sum_i w(||r_i||) ||r_i||^2
+</span></p>
+<p>When there are too much outliers, RANSAC algorithm can be usefull:</p>
+<ol type="1">
+<li>Estimate <span class="math inline">p</span> on a subset of <span class="math inline">k</span> correspondances</li>
+<li>Compute <span class="math inline">r_i</span> on the subset with the estimated <span class="math inline">p</span></li>
+<li>count the number of inliers (such as <span class="math inline">||r_i|| &lt; \epsilon</span> for a chosen <span class="math inline">\epsilon</span>)</li>
+<li>Repeat the selction process <span class="math inline">S</span> times, and select the one with the largest number of inliers</li>
+</ol>
+<h3 id="d-alignment-absolute-orientation-problem">3D alignment (absolute orientation problem)</h3>
+<p>In the case of a rigid euclidian motion, the energy to minimize is:</p>
+<p><span class="math display">
+E_{R3D} = \sum_i ||x_i&#39; - Rx_i -t ||^2
+</span></p>
+<p>Estimators for <span class="math inline">t</span> and <span class="math inline">R</span> can be computed:</p>
+<ul>
+<li><span class="math inline">t = c&#39;-Rc</span> where <span class="math inline">c</span> and <span class="math inline">c&#39;</span> are the centroids of the cloud points</li>
+<li><span class="math inline">R=UV^T</span> where <span class="math inline">C=U \Sigma V^T</span> is the singular decomposition of the correlation matrix <span class="math inline">C = \sum_i (x&#39;-c&#39;)(x-c)^T</span></li>
+</ul>
+<h2 id="pose-estimation-and-camera-calibration">Pose estimation and camera calibration</h2>
+<p>General idea:</p>
+<p>Use the fact that <span class="math inline">\tilde{x_s} = K [R,t] p = Pp</span>, solve a linear system to find <span class="math inline">P</span> and use the <span class="math inline">RQ</span> factorization to find <span class="math inline">K</span> and <span class="math inline">[R,t]</span></p></div>
+            <div class="d-none d-xl-block col-xl-2 bd-toc">
+               <ul class="section-nav">
+                  <li class="toc-entry"><ul>
+<li><a href="#feature-detection">Feature detection</a></li>
+<li><a href="#feature-matching">Feature matching</a></li>
+<li><a href="#feature-alignment">Feature alignment</a>
+<ul>
+<li><a href="#d-alignment-with-least-squares-usefull-for-panography">2D alignment with least squares (usefull for panography)</a></li>
+<li><a href="#robust-least-square-and-ransac">Robust least square and RANSAC</a></li>
+<li><a href="#d-alignment-absolute-orientation-problem">3D alignment (absolute orientation problem)</a></li>
+</ul></li>
+<li><a href="#pose-estimation-and-camera-calibration">Pose estimation and camera calibration</a></li>
+</ul></li>
+               </ul>
+            </div>
+         </div>
+               </div>
+            <!-- Add comment hosting service here -->
+            <!-- Footer -->
+            <footer class="footer text-muted">
+               <div align="center">
+                  <!-- Update licences -->
+                  Content is available under <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>
+                  &nbsp;|&nbsp;
+                  Sourcecode licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank" rel="noopener">GPL-3.0</a>
+                  <br />
+                  <!-- Please keep the following line -->
+                  Built with <a href="https://www.pandoc.org" target="_blank" rel="noopener">Pandoc</a> 
+                  using <a href="https://github.com/ashki23/pandoc-bootstrap" target="_blank" rel="noopener">pandoc-bootstrap</a> theme
+                  <br />
+                  <!-- Update copyright -->
+                  Copyright, Author Name
+               </div>
+            </footer>
+            <!-- Add global site tag (gtag.js) and site analytics here -->
+            <!-- JS, Popper.js, and jQuery -->
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+      <!-- Mathjax -->
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script>
+         /* Bootstrap styles to tables */
+         function bootstrapStylePandocTables() {
+         $('tr.header').parent('thead').parent('table').addClass('table table-condensed'); }
+         $(document).ready(function () { bootstrapStylePandocTables(); });
+         /* Adjust the height when click the toc */
+         var shiftWindow = function() { scrollBy(0, -60) };
+         window.addEventListener("hashchange", shiftWindow);
+         function load() { if (window.location.hash) shiftWindow(); }
+      </script>
+   </body>
+</html>
