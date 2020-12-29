@@ -10,7 +10,7 @@ author: Louis Lesueur
 $$
 \mathbb{P}^n = (\mathbb{R}^{n+1}  \setminus  \{0\}) / "colinearity"
 $$
-
+ 
 For $x \in \mathbb{R}^n$, a point $\tilde{x} \in \mathbb{P}^n$ is associated (homogenous coordinates of $x$), such as $\tilde{x} = w \bar{x}$ where $\bar{x} = (x,1)$ is the augmented vector of $x$
 
 In the projective space, points with a null last coordinate ($w=0$) are called infinity points.

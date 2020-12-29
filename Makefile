@@ -8,10 +8,10 @@ BUILDDIR = docs/
 TARGETS = $(addprefix $(BUILDDIR),$(addsuffix .html,$(SOURCES)))
 
 PARAMETERS += --katex
-PARAMETERS += --include-after-body pandoc-bootstrap/footer.html
-PARAMETERS += --include-before-body pandoc-bootstrap/navbar.html
-PARAMETERS += --include-in-header pandoc-bootstrap/header.html
-PARAMETERS += --template pandoc-bootstrap/template.html
+PARAMETERS += --include-after-body template/footer.html
+PARAMETERS += --include-before-body template/navbar.html
+PARAMETERS += --include-in-header template/header.html
+PARAMETERS += --template template/template.html
 PARAMETERS += --toc
 PARAMETERS += -s -V mainfont="TeX"
 
