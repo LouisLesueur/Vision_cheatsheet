@@ -4,9 +4,9 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
       <meta name="generator" content="pandoc">
-      <meta name="author" content="Louis Lesueur">
       
-      <title>Image segmentation</title>
+      
+      
       <!-- Bootstrap -->
       <link rel="stylesheet" href="css/bootstrap.min.css">
       <!-- Font-awesome -->
@@ -64,68 +64,7 @@
 
             </nav>
             <div class="container">
-         <h1 class="title">Image segmentation</h1>
-                  <div class="row">
-            <div class="col-xl-10"><h2 id="active-contours">Active contours</h2>
-<h3 id="snakes">Snakes</h3>
-<p>For snakes, start with an initial contour <span class="math inline">f(s)</span> and minimize the energy:</p>
-<p><span class="math display">
-E = \int (E_{int} + E_{edge} + E_{const})
-</span></p>
-<p>With:</p>
-<ul>
-<li><span class="math inline">E_{int} = \alpha(s) || \partial_s f (s) ||^2 + \beta(s) || \partial_s^2 f ||^2 ds</span> (<span class="math inline">\alpha</span> is the “elasticity” and <span class="math inline">\beta</span> the “rigidity”)</li>
-<li><span class="math inline">E_{edge} = - || \nabla I(f(s)) ||^2</span></li>
-<li><span class="math inline">E_{const}</span> are constraints, such as spring towards an anchor point <span class="math inline">(x,y)</span> (<span class="math inline">k_{xy}||f(s) - d(x,y)||</span>) and volcano (<span class="math inline">1/r</span>)</li>
-</ul>
-<p>Discretization leads to a linear system that can be easily solved with conjugate gradient or Jacobi iterations.</p>
-<p>Variants:</p>
-<ul>
-<li>B-spline snakes</li>
-<li>Dynamic Snakes</li>
-</ul>
-<h3 id="level-sets">Level sets</h3>
-<p><a href="https://wiseodd.github.io/techblog/2016/11/20/levelset-segmentation/">see here</a></p>
-<h2 id="graph-based-methods">Graph based methods</h2>
-<h3 id="normalized-cuts">Normalized cuts</h3>
-<h3 id="graph-cut-and-energy-minimization">Graph cut and energy minimization</h3>
-<h2 id="clustering-methods">Clustering methods</h2>
-<h3 id="k-means-clustering">k-Means clustering</h3>
-<h3 id="watershed-algorithm">watershed algorithm</h3>
-<h3 id="quick-shift">quick shift</h3>
-<h3 id="slic">SLIC</h3>
-<h3 id="mean-shift">Mean shift</h3>
-<h2 id="probabilistic-image-segmentation-technique">Probabilistic image segmentation technique</h2>
-<h3 id="gmm">GMM</h3></div>
-            <div class="d-none d-xl-block col-xl-2 bd-toc">
-               <ul class="section-nav">
-                  <li class="toc-entry"><ul>
-<li><a href="#active-contours">Active contours</a>
-<ul>
-<li><a href="#snakes">Snakes</a></li>
-<li><a href="#level-sets">Level sets</a></li>
-</ul></li>
-<li><a href="#graph-based-methods">Graph based methods</a>
-<ul>
-<li><a href="#normalized-cuts">Normalized cuts</a></li>
-<li><a href="#graph-cut-and-energy-minimization">Graph cut and energy minimization</a></li>
-</ul></li>
-<li><a href="#clustering-methods">Clustering methods</a>
-<ul>
-<li><a href="#k-means-clustering">k-Means clustering</a></li>
-<li><a href="#watershed-algorithm">watershed algorithm</a></li>
-<li><a href="#quick-shift">quick shift</a></li>
-<li><a href="#slic">SLIC</a></li>
-<li><a href="#mean-shift">Mean shift</a></li>
-</ul></li>
-<li><a href="#probabilistic-image-segmentation-technique">Probabilistic image segmentation technique</a>
-<ul>
-<li><a href="#gmm">GMM</a></li>
-</ul></li>
-</ul></li>
-               </ul>
-            </div>
-         </div>
+         
                </div>
             <!-- Add comment hosting service here -->
             <!-- Footer -->

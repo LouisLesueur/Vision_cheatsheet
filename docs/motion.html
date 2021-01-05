@@ -6,7 +6,7 @@
       <meta name="generator" content="pandoc">
       <meta name="author" content="Louis Lesueur">
       
-      <title>Feature processing</title>
+      <title>Motion</title>
       <!-- Bootstrap -->
       <link rel="stylesheet" href="css/bootstrap.min.css">
       <!-- Font-awesome -->
@@ -64,95 +64,42 @@
 
             </nav>
             <div class="container">
-         <h1 class="title">Feature processing</h1>
+         <h1 class="title">Motion</h1>
                   <div class="row">
-            <div class="col-xl-10"><h2 id="feature-detection">Feature detection</h2>
-<h2 id="feature-matching">Feature matching</h2>
-<h2 id="feature-alignment">Feature alignment</h2>
-<h3 id="d-alignment-with-least-squares-usefull-for-panography">2D alignment with least squares (usefull for panography)</h3>
-<p>Given a set of matched feature points <span class="math inline">(x,x&#39;)</span> in two images, one can infer a transformation of the form <span class="math inline">x&#39;=f_p(x)</span> with parameters <span class="math inline">p</span> that can be found by minimizing the linear least square energy: <span class="math display">
-E_{LLS} = \sum_i ||x_i&#39;-f_p(x_i)||^2
+            <div class="col-xl-10"><h2 id="triangulation">Triangulation</h2>
+<p>Goal: estimate <span class="math inline">p</span> knowing <span class="math inline">c_0</span>, <span class="math inline">c_1</span> and <span class="math inline">x_0</span>, <span class="math inline">x_1</span> the optical centers of two cameras and the projections of <span class="math inline">p</span> on the images:</p>
+<p>Let’s note <span class="math inline">v_i = \tilde{x_i}-c_i</span> the vector going from the optical center to the image plan. The, the point on the ray directed by <span class="math inline">v_i</span> which is the closest to <span class="math inline">p</span> is: <span class="math display">
+q_i = \argmin_d ||c_j + d v_j - p ||^2 v_j = c_j + (v_j v_j^T)(p-c_j) =  c_j + (p-c_j)_{||}
 </span></p>
-<p>For simple transforms, we have: <span class="math inline">\Delta x = x&#39;-x = J(x)p</span>, where <span class="math inline">J</span> is the jacobian. The problem becomes equivalent to solving the system: <span class="math display">
-Ab = p
-</span> with:</p>
-<ul>
-<li><span class="math inline">A = \sum_i J^T(x_i) J(x_i)</span></li>
-<li><span class="math inline">b = \sum_i J^T(x_i) \Delta x_i</span></li>
-</ul>
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Transfoorm</th>
-<th> Jacobian</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>translation</td>
-<td><span class="math inline">\begin{pmatrix} 1 &amp; 0\\ 0 &amp; 1 \\ \end{pmatrix}</span></td>
-</tr>
-<tr class="even">
-<td>euclidian</td>
-<td><span class="math inline">\begin{pmatrix} 1 &amp; 0 &amp; -s_\theta x - c_\theta y\\ 0 &amp; 1 &amp; c_\theta x - s_\theta y\\ \end{pmatrix}</span></td>
-</tr>
-<tr class="odd">
-<td>similarity</td>
-<td><span class="math inline">\begin{pmatrix} 1 &amp; 0 &amp; x &amp; - y\\ 0 &amp; 1 &amp; y &amp; x\\ \end{pmatrix}</span></td>
-</tr>
-<tr class="even">
-<td>affine</td>
-<td><span class="math inline">\begin{pmatrix} 1 &amp; 0 &amp; x &amp; y &amp; 0 &amp; 0\\ 0 &amp; 1 &amp; 0 &amp; 0 &amp; x &amp; y\\ \end{pmatrix}</span></td>
-</tr>
-</tbody>
-</table>
-<p>Variants such as weighted least squares and covariant weighted least squares can be used.</p>
-<h3 id="robust-least-square-and-ransac">Robust least square and RANSAC</h3>
-<p>When there are robust outliers:</p>
+<p>An estimation of <span class="math inline">p</span> is then given by:</p>
 <p><span class="math display">
-E_{RLS}(\Delta p) = \sum_i \rho(||r_i||)
+p = \argmin_p \sum_j ||(p-c_j)_\perp ||^2 = (\sum_j (I-v_j v_j^T))^{-1} (\sum_j (I-v_j v_j^T)c_j)^{-1}
 </span></p>
-<p>with <span class="math inline">r_i=f_p(x_i)-x_i&#39;</span> the residuals, and <span class="math inline">\rho</span> a wrobust penalty.</p>
-<p>weighted:</p>
+<h2 id="two-frame-structure-from-motion-application-view-morphing">Two-frame structure from motion (application: view morphing)</h2>
+<p>From two images taken by two cameras with <span class="math inline">c_0 \overset{(R,t)}{\rightarrow} c_1</span>, and a set of matched points <span class="math inline">(x_{0i}, x_{1,j})</span>, find <span class="math inline">(R,t)</span></p>
+<p>We have: <span class="math inline">d_1 \tilde{x_1} = R d_0 \tilde{x_0} + t</span>, taking the cross-product by <span class="math inline">t</span> from the left and the dot product by <span class="math inline">\tilde{x_1}</span> on the right we have the epipolar constraint:</p>
 <p><span class="math display">
-E_{IRLS}(\Delta p) = \sum_i w(||r_i||) ||r_i||^2
+\tilde{x_1}^T E \tilde{x_0} = 0
 </span></p>
-<p>When there are too much outliers, RANSAC algorithm can be usefull:</p>
-<ol type="1">
-<li>Estimate <span class="math inline">p</span> on a subset of <span class="math inline">k</span> correspondances</li>
-<li>Compute <span class="math inline">r_i</span> on the subset with the estimated <span class="math inline">p</span></li>
-<li>count the number of inliers (such as <span class="math inline">||r_i|| &lt; \epsilon</span> for a chosen <span class="math inline">\epsilon</span>)</li>
-<li>Repeat the selction process <span class="math inline">S</span> times, and select the one with the largest number of inliers</li>
-</ol>
-<h3 id="d-alignment-absolute-orientation-problem">3D alignment (absolute orientation problem)</h3>
-<p>In the case of a rigid euclidian motion, the energy to minimize is:</p>
-<p><span class="math display">
-E_{R3D} = \sum_i ||x_i&#39; - Rx_i -t ||^2
-</span></p>
-<p>Estimators for <span class="math inline">t</span> and <span class="math inline">R</span> can be computed:</p>
-<ul>
-<li><span class="math inline">t = c&#39;-Rc</span> where <span class="math inline">c</span> and <span class="math inline">c&#39;</span> are the centroids of the cloud points</li>
-<li><span class="math inline">R=UV^T</span> where <span class="math inline">C=U \Sigma V^T</span> is the singular decomposition of the correlation matrix <span class="math inline">C = \sum_i (x&#39;-c&#39;)(x-c)^T</span></li>
-</ul>
-<h2 id="pose-estimation-and-camera-calibration">Pose estimation and camera calibration</h2>
-<p>General idea:</p>
-<p>Use the fact that <span class="math inline">\tilde{x_s} = K [R,t] p = Pp</span>, solve a linear system to find <span class="math inline">P</span> and use the <span class="math inline">RQ</span> factorization to find <span class="math inline">K</span> and <span class="math inline">[R,t]</span></p></div>
+<p>where <span class="math inline">E = [t]_\times R</span> is the essential matrix</p>
+<p>Note that <span class="math inline">E</span> maps a point to its corresonding epipolar line in the other image: <span class="math inline">l_1 = E \tilde{x_0}</span> and <span class="math inline">l_0 = E^T \tilde{x_1}</span></p>
+<h3 id="estimating-motion-parameters">Estimating motion parameters</h3>
+<p><span class="math inline">E</span> can be estimated using the epipolar constraint by forming a linear system using the matched points. Then several techniques exists to extract <span class="math inline">R</span> and <span class="math inline">t</span> from <span class="math inline">E</span>.</p>
+<h2 id="factorization">Factorization</h2>
+<p>From <span class="math inline">M</span> cameras and <span class="math inline">N</span> matched points we have can build the</p>
+<p><a href="http://www.cs.unc.edu/~lazebnik/spring11/lec17_sfm.pdf">see here</a></p>
+<h2 id="dense-motion-estimation">Dense motion estimation</h2>
+<p><a href="https://www.ece.mcmaster.ca/~shirani/vision/Dense_Motion.pdf">see here</a></p></div>
             <div class="d-none d-xl-block col-xl-2 bd-toc">
                <ul class="section-nav">
                   <li class="toc-entry"><ul>
-<li><a href="#feature-detection">Feature detection</a></li>
-<li><a href="#feature-matching">Feature matching</a></li>
-<li><a href="#feature-alignment">Feature alignment</a>
+<li><a href="#triangulation">Triangulation</a></li>
+<li><a href="#two-frame-structure-from-motion-application-view-morphing">Two-frame structure from motion (application: view morphing)</a>
 <ul>
-<li><a href="#d-alignment-with-least-squares-usefull-for-panography">2D alignment with least squares (usefull for panography)</a></li>
-<li><a href="#robust-least-square-and-ransac">Robust least square and RANSAC</a></li>
-<li><a href="#d-alignment-absolute-orientation-problem">3D alignment (absolute orientation problem)</a></li>
+<li><a href="#estimating-motion-parameters">Estimating motion parameters</a></li>
 </ul></li>
-<li><a href="#pose-estimation-and-camera-calibration">Pose estimation and camera calibration</a></li>
+<li><a href="#factorization">Factorization</a></li>
+<li><a href="#dense-motion-estimation">Dense motion estimation</a></li>
 </ul></li>
                </ul>
             </div>

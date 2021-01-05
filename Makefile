@@ -3,9 +3,13 @@ SOURCES = \
 	image_processing \
 	index \
 	segmentation \
+	motion \
+	photo \
+	stereo \
 
 BUILDDIR = docs/
 TARGETS = $(addprefix $(BUILDDIR),$(addsuffix .html,$(SOURCES)))
+DEP = $(wildcard template/*.html)
 
 PARAMETERS += --katex
 PARAMETERS += --include-after-body template/footer.html

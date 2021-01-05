@@ -28,7 +28,7 @@ Variants:
 
 ### Level sets
 
-https://wiseodd.github.io/techblog/2016/11/20/levelset-segmentation/
+[see here](https://wiseodd.github.io/techblog/2016/11/20/levelset-segmentation/)
 
 ## Graph based methods
 

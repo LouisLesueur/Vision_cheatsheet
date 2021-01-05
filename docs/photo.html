@@ -6,7 +6,7 @@
       <meta name="generator" content="pandoc">
       <meta name="author" content="Louis Lesueur">
       
-      <title>Feature processing</title>
+      <title>Computational photography</title>
       <!-- Bootstrap -->
       <link rel="stylesheet" href="css/bootstrap.min.css">
       <!-- Font-awesome -->
@@ -64,95 +64,24 @@
 
             </nav>
             <div class="container">
-         <h1 class="title">Feature processing</h1>
+         <h1 class="title">Computational photography</h1>
                   <div class="row">
-            <div class="col-xl-10"><h2 id="feature-detection">Feature detection</h2>
-<h2 id="feature-matching">Feature matching</h2>
-<h2 id="feature-alignment">Feature alignment</h2>
-<h3 id="d-alignment-with-least-squares-usefull-for-panography">2D alignment with least squares (usefull for panography)</h3>
-<p>Given a set of matched feature points <span class="math inline">(x,x&#39;)</span> in two images, one can infer a transformation of the form <span class="math inline">x&#39;=f_p(x)</span> with parameters <span class="math inline">p</span> that can be found by minimizing the linear least square energy: <span class="math display">
-E_{LLS} = \sum_i ||x_i&#39;-f_p(x_i)||^2
-</span></p>
-<p>For simple transforms, we have: <span class="math inline">\Delta x = x&#39;-x = J(x)p</span>, where <span class="math inline">J</span> is the jacobian. The problem becomes equivalent to solving the system: <span class="math display">
-Ab = p
-</span> with:</p>
-<ul>
-<li><span class="math inline">A = \sum_i J^T(x_i) J(x_i)</span></li>
-<li><span class="math inline">b = \sum_i J^T(x_i) \Delta x_i</span></li>
-</ul>
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Transfoorm</th>
-<th> Jacobian</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>translation</td>
-<td><span class="math inline">\begin{pmatrix} 1 &amp; 0\\ 0 &amp; 1 \\ \end{pmatrix}</span></td>
-</tr>
-<tr class="even">
-<td>euclidian</td>
-<td><span class="math inline">\begin{pmatrix} 1 &amp; 0 &amp; -s_\theta x - c_\theta y\\ 0 &amp; 1 &amp; c_\theta x - s_\theta y\\ \end{pmatrix}</span></td>
-</tr>
-<tr class="odd">
-<td>similarity</td>
-<td><span class="math inline">\begin{pmatrix} 1 &amp; 0 &amp; x &amp; - y\\ 0 &amp; 1 &amp; y &amp; x\\ \end{pmatrix}</span></td>
-</tr>
-<tr class="even">
-<td>affine</td>
-<td><span class="math inline">\begin{pmatrix} 1 &amp; 0 &amp; x &amp; y &amp; 0 &amp; 0\\ 0 &amp; 1 &amp; 0 &amp; 0 &amp; x &amp; y\\ \end{pmatrix}</span></td>
-</tr>
-</tbody>
-</table>
-<p>Variants such as weighted least squares and covariant weighted least squares can be used.</p>
-<h3 id="robust-least-square-and-ransac">Robust least square and RANSAC</h3>
-<p>When there are robust outliers:</p>
-<p><span class="math display">
-E_{RLS}(\Delta p) = \sum_i \rho(||r_i||)
-</span></p>
-<p>with <span class="math inline">r_i=f_p(x_i)-x_i&#39;</span> the residuals, and <span class="math inline">\rho</span> a wrobust penalty.</p>
-<p>weighted:</p>
-<p><span class="math display">
-E_{IRLS}(\Delta p) = \sum_i w(||r_i||) ||r_i||^2
-</span></p>
-<p>When there are too much outliers, RANSAC algorithm can be usefull:</p>
-<ol type="1">
-<li>Estimate <span class="math inline">p</span> on a subset of <span class="math inline">k</span> correspondances</li>
-<li>Compute <span class="math inline">r_i</span> on the subset with the estimated <span class="math inline">p</span></li>
-<li>count the number of inliers (such as <span class="math inline">||r_i|| &lt; \epsilon</span> for a chosen <span class="math inline">\epsilon</span>)</li>
-<li>Repeat the selction process <span class="math inline">S</span> times, and select the one with the largest number of inliers</li>
-</ol>
-<h3 id="d-alignment-absolute-orientation-problem">3D alignment (absolute orientation problem)</h3>
-<p>In the case of a rigid euclidian motion, the energy to minimize is:</p>
-<p><span class="math display">
-E_{R3D} = \sum_i ||x_i&#39; - Rx_i -t ||^2
-</span></p>
-<p>Estimators for <span class="math inline">t</span> and <span class="math inline">R</span> can be computed:</p>
-<ul>
-<li><span class="math inline">t = c&#39;-Rc</span> where <span class="math inline">c</span> and <span class="math inline">c&#39;</span> are the centroids of the cloud points</li>
-<li><span class="math inline">R=UV^T</span> where <span class="math inline">C=U \Sigma V^T</span> is the singular decomposition of the correlation matrix <span class="math inline">C = \sum_i (x&#39;-c&#39;)(x-c)^T</span></li>
-</ul>
-<h2 id="pose-estimation-and-camera-calibration">Pose estimation and camera calibration</h2>
-<p>General idea:</p>
-<p>Use the fact that <span class="math inline">\tilde{x_s} = K [R,t] p = Pp</span>, solve a linear system to find <span class="math inline">P</span> and use the <span class="math inline">RQ</span> factorization to find <span class="math inline">K</span> and <span class="math inline">[R,t]</span></p></div>
+            <div class="col-xl-10"><h2 id="image-stitching">Image stitching</h2>
+<h3 id="motion-models">Motion models</h3>
+<h3 id="global-alignment">Global alignment</h3>
+<h3 id="compositing">Compositing</h3>
+<h2 id="photometric-calibration">Photometric calibration</h2>
+<p>Camera response function: gives the mapping between incoming log irradiance and output 8-bits pixel value for one color channel.</p></div>
             <div class="d-none d-xl-block col-xl-2 bd-toc">
                <ul class="section-nav">
                   <li class="toc-entry"><ul>
-<li><a href="#feature-detection">Feature detection</a></li>
-<li><a href="#feature-matching">Feature matching</a></li>
-<li><a href="#feature-alignment">Feature alignment</a>
+<li><a href="#image-stitching">Image stitching</a>
 <ul>
-<li><a href="#d-alignment-with-least-squares-usefull-for-panography">2D alignment with least squares (usefull for panography)</a></li>
-<li><a href="#robust-least-square-and-ransac">Robust least square and RANSAC</a></li>
-<li><a href="#d-alignment-absolute-orientation-problem">3D alignment (absolute orientation problem)</a></li>
+<li><a href="#motion-models">Motion models</a></li>
+<li><a href="#global-alignment">Global alignment</a></li>
+<li><a href="#compositing">Compositing</a></li>
 </ul></li>
-<li><a href="#pose-estimation-and-camera-calibration">Pose estimation and camera calibration</a></li>
+<li><a href="#photometric-calibration">Photometric calibration</a></li>
 </ul></li>
                </ul>
             </div>
